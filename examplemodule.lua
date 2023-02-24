@@ -6,7 +6,7 @@ local module = {
 }
 
 RegisterModule(module, function()
-    local fileName = string.gsub(Mem.readString("618801151380"), "Code", "")
+    local fileName = string.gsub(Mem.readString("618801151380"), "Code", " - Visual Studio Code")
 
     SetPresence({
         state = fileName,
