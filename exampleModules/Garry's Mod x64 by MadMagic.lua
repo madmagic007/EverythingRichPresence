@@ -24,7 +24,7 @@ RegisterModule(module, function()
     local presence = {
         largeImageKey = "gmod",
         largeImageText = "Garry's Mod RPC By MadMagic",
-        details = "Im Main Menu"
+        details = "In Main Menu"
     }
 
     if map ~= "" then
