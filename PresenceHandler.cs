@@ -10,6 +10,7 @@ namespace EverythingRichPresence {
         private static string lastId = "";
 
         public static void Init(string id) {
+            Console.WriteLine("inited: " + id);
             if (!lastId.Equals(id)) StopPresence();
 
             client = new DiscordRpcClient(id);
@@ -24,7 +25,7 @@ namespace EverythingRichPresence {
 
             Timestamps ts = new();
             if (tbl.ContainsKey("remaining")) ts.EndUnixMilliseconds = (ulong)DateTimeOffset.Now.ToUnixTimeMilliseconds() + (ulong)tbl.GetValue("remaining");
-            else if ((bool)tbl.GetValue("elapsed")) {
+            else if (tbl.ContainsKey("elapsed") && (bool)tbl.GetValue("elapsed")) {
                 if (current == 0) current = (ulong)DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 ts.StartUnixMilliseconds = current;
             } else current = 0;

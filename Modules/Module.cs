@@ -1,5 +1,9 @@
-﻿using Flurl.Http;
+﻿using EverythingRichPresence.LuaStuff;
+using EverythingRichPresence.LuaStuff.Globals;
+using Flurl.Http;
 using Neo.IronLua;
+using System.IO;
+using System.Net;
 
 namespace EverythingRichPresence.Modules {
 
@@ -10,13 +14,26 @@ namespace EverythingRichPresence.Modules {
         public string appName, appId, titleContains, updateUrl, filePath;
         public Func<object> loop;
 
-        public Module() {
-            Update();
-        }
+        public void Update() {
+            if (string.IsNullOrEmpty(updateUrl)) return;
+            lua.Dispose();
 
-        private async void Update() {
-            string s = await updateUrl.GetStringAsync();
-            Console.WriteLine(s);
+            string s = updateUrl.GetStringAsync().Result;
+            File.WriteAllText(filePath, s);
+
+            lua.Dispose();
+            env = lua.CreateEnvironment<LuaGlobal>();
+
+            Globalhandler.LoadGlobals(env);
+            env.RegisterModule = new Action<LuaTable, Func<object>>((table, loop) => {
+                appName = table.GetValue("appName") as string;
+                appId = table.GetValue("discordAppId") as string;
+                titleContains = table.GetValue("titleContains") as string;
+                updateUrl = table.GetValue("updateUrl") as string;
+                this.loop = loop;
+            });
+
+            env.dochunk(lua.CompileChunk(filePath, new LuaCompileOptions()));
         }
     }
 }

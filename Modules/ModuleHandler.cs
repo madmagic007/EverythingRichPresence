@@ -2,12 +2,11 @@
 using System.Diagnostics;
 using Timer = System.Threading.Timer;
 
-namespace EverythingRichPresence.Modules
-{
+namespace EverythingRichPresence.Modules {
 
     public class ModuleHandler {
 
-        private static readonly List<Module> loadedModules = new();
+        public static readonly List<Module> loadedModules = new();
         public static Module activeModule;
         private static Timer timer;
         public static Mem mem;

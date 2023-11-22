@@ -6,7 +6,7 @@ namespace EverythingRichPresence.LuaStuff.Globals {
     internal class LuaGlobalMem : IGlobal {
 
         public void LoadGlobal(dynamic env) {
-            dynamic mem = env.Lua.CreateEnvironment<LuaGlobal>();
+            dynamic mem = ((LuaGlobal)env).Lua.CreateEnvironment<LuaGlobal>();
 
             mem.readString = new Func<string, string>(s => ModuleHandler.mem?.ReadString(s, length: 100) ?? "");
             mem.readInt = new Func<string, int>(s => ModuleHandler.mem?.ReadInt(s) ?? 0);

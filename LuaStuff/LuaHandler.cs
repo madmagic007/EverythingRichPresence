@@ -1,18 +1,15 @@
 ﻿using EverythingRichPresence.Modules;
 using Neo.IronLua;
+using System.IO;
 
 namespace EverythingRichPresence.LuaStuff {
 
     public class LuaHandler {
 
         public static void Init() {
-            LuaCompileOptions lco = new();
-
-            FileInfo f = new(Application.ExecutablePath);
-            DirectoryInfo modulesDir = new(f.Directory + "/modules");
-            modulesDir.Create();
-
-            Directory.GetFiles(modulesDir.FullName, "*", SearchOption.AllDirectories).OfType<String>().ToList().ForEach(f => {
+            Console.WriteLine("initing lua");
+            ModuleHandler.loadedModules.Clear();
+            Directory.GetFiles(Program.modulesDir.FullName, "*", SearchOption.AllDirectories).OfType<string>().ToList().ForEach(f => {
                 Lua lua = new();
                 dynamic env = lua.CreateEnvironment<LuaGlobal>();
 
@@ -20,7 +17,7 @@ namespace EverythingRichPresence.LuaStuff {
                 env.RegisterModule = new Action<LuaTable, Func<object>>((table, loop) => {
                     Module module = new() {
                         appName = table.GetValue("appName") as string,
-                        appId = table.GetValue("discordAppID") as string,
+                        appId = table.GetValue("discordAppId") as string,
                         titleContains = table.GetValue("titleContains") as string,
                         updateUrl = table.GetValue("updateUrl") as string,
                         filePath = f,
@@ -28,10 +25,11 @@ namespace EverythingRichPresence.LuaStuff {
                         env = env,
                         loop = loop
                     };
+                    module.Update();
                     ModuleHandler.AddModule(module);
                 });
 
-                env.DoChunk(lua.CompileChunk(f, lco));
+                env.dochunk(lua.CompileChunk(f, new LuaCompileOptions()));
             });
         }
     }

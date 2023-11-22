@@ -1,12 +1,17 @@
 using EverythingRichPresence.LuaStuff;
 using EverythingRichPresence.Modules;
+using EverythingRichPresence.Properties;
 using Microsoft.Win32;
+using Neo.IronLua;
 using System.Diagnostics;
 using System.Resources;
+using System.Security.Policy;
 
 namespace EverythingRichPresence {
 
     public class Program : ApplicationContext {
+
+        public static readonly DirectoryInfo modulesDir = Directory.CreateDirectory(Environment.GetEnvironmentVariable("APPDATA") + "/MadMagic/Everything Rich Presence");
 
         [STAThread]
         static void Main() {
@@ -24,12 +29,20 @@ namespace EverythingRichPresence {
             trayIcon = new() {
                 Text = "Everything RPC",
                 ContextMenuStrip = new(),
-                //Icon = Resources.AppIcon,
+                Icon = Resources.icon,
                 Visible = true
             };
             trayIcon.ContextMenuStrip.Items.AddRange(new ToolStripItem[] {
                 new ToolStripMenuItem("Refresh modules", null, (_, _) => {
                     LuaHandler.Init();
+                    ModuleHandler.Init();
+                }),
+                new ToolStripMenuItem("Open Modules Folder", null, (_, _) => {
+                    ProcessStartInfo psi = new() {
+                        FileName = modulesDir.FullName,
+                        UseShellExecute = true
+                    };
+                    Process.Start(psi);
                 }),
                 new ToolStripSeparator(),
                 new ToolStripMenuItem("Exit", null, (_, _) => {
