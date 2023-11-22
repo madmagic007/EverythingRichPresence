@@ -11,7 +11,7 @@ namespace EverythingRichPresence {
 
     public class Program : ApplicationContext {
 
-        public static readonly DirectoryInfo modulesDir = Directory.CreateDirectory(Environment.GetEnvironmentVariable("APPDATA") + "/MadMagic/Everything Rich Presence");
+        public static readonly DirectoryInfo modulesDir = Directory.CreateDirectory(Environment.GetEnvironmentVariable("APPDATA") + "/MadMagic/Everything Rich Presence/modules");
 
         [STAThread]
         static void Main() {
