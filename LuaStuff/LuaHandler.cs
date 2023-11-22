@@ -7,7 +7,6 @@ namespace EverythingRichPresence.LuaStuff {
     public class LuaHandler {
 
         public static void Init() {
-            Console.WriteLine("initing lua");
             ModuleHandler.loadedModules.Clear();
             Directory.GetFiles(Program.modulesDir.FullName, "*", SearchOption.AllDirectories).OfType<string>().ToList().ForEach(f => {
                 Lua lua = new();

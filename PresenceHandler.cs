@@ -10,7 +10,6 @@ namespace EverythingRichPresence {
         private static string lastId = "";
 
         public static void Init(string id) {
-            Console.WriteLine("inited: " + id);
             if (!lastId.Equals(id)) StopPresence();
 
             client = new DiscordRpcClient(id);
