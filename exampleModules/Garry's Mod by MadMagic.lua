@@ -2,7 +2,7 @@ local module = {
     discordAppId = "772853901396279376",
     appName = "gmod",
     titleContains = "x64",
-    updateUrl = "https://raw.githubusercontent.com/madmagic007/EverythingRichPresence/main/exampleModules/Garry's%20Mod%20x64%20by%20MadMagic.lua"
+    updateUrl = "https://github.com/madmagic007/EverythingRichPresence/raw/main/exampleModules/Garry's%20Mod%20by%20MadMagic.lua"
 }
 
 local addresses = {
