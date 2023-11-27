@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using Neo.IronLua;
 using System.Diagnostics;
 using System.Resources;
+using System.Runtime.InteropServices;
 using System.Security.Policy;
 
 namespace EverythingRichPresence {
@@ -24,6 +25,9 @@ namespace EverythingRichPresence {
         }
 
         public static NotifyIcon trayIcon;
+        private static ToolStripMenuItem consoleItem = new("Enable Module Debug Console", null, (_, _) => {
+            ToggleConsole();
+        });
 
         public Program() {
             trayIcon = new() {
@@ -45,6 +49,8 @@ namespace EverythingRichPresence {
                     Process.Start(psi);
                 }),
                 new ToolStripSeparator(),
+                consoleItem,
+                new ToolStripSeparator(),
                 new ToolStripMenuItem("Exit", null, (_, _) => {
                     trayIcon.Visible = false;
                     Environment.Exit(0);
@@ -57,6 +63,45 @@ namespace EverythingRichPresence {
 
         public static void SendNotif(string text) {
             trayIcon.ShowBalloonTip(0, "ERPC", text, ToolTipIcon.Info);
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool AllocConsole();
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        private static int hide = 0;
+        private static int show = 5;
+        private static int currentState = 0;
+
+        private static void ToggleConsole() {
+            IntPtr handle = GetConsoleWindow();
+            currentState = currentState == hide ? show : hide;
+
+            if (handle == IntPtr.Zero) AllocConsole();
+            else {
+                ShowWindow(handle, currentState);
+                Console.WriteLine("showing");
+            }
+
+            consoleItem.Text = $"{(currentState == hide ? "Enable" : "Disable")} Module Debug Console";
+
+            if (currentState == show) {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Warning: ");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Closing this window will exit the app, disable the console from the system tray.");
+                Console.ResetColor();
+            }
+        }
+
+        public static void Log(string s) {
+            if (currentState != show) return;
+            Console.WriteLine(s);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace EverythingRichPresence.Modules {
 
         public Lua lua;
         public dynamic env;
-        public string appName, appId, titleContains, updateUrl, filePath;
+        public string appName, appId, titleContains, updateUrl, filePath, fileName;
         public Func<object> loop;
 
         public void Update() {

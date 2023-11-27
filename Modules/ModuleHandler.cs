@@ -1,5 +1,4 @@
-﻿using Memory;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Timer = System.Threading.Timer;
 
 namespace EverythingRichPresence.Modules {
@@ -9,19 +8,19 @@ namespace EverythingRichPresence.Modules {
         public static readonly List<Module> loadedModules = new();
         public static Module activeModule;
         private static Timer timer;
-        public static Mem mem;
+        public static MyMemory mem;
 
         public static void AddModule(Module module) {
-            if (loadedModules.FindIndex(m => m.appName == module.appName) >= 0) return;
+            if (loadedModules.FindIndex(m => m.fileName == module.fileName) >= 0) return;
             loadedModules.Add(module);
+            Program.Log("Loaded module: " + module.fileName);
         }
 
         public static void Init() {
-            mem = new();
             StopAll();
             timer = new(_ => {
-                if (mem.theProc == null) ScanModules();
-                else if (mem.theProc.HasExited) {
+                if (mem == null || mem.p == null) ScanModules();
+                else if (mem.p.HasExited) {
                     PresenceHandler.StopPresence();
                     mem.CloseProcess();
                     ScanModules();
@@ -35,16 +34,16 @@ namespace EverythingRichPresence.Modules {
         }
 
         private static void ScanModules() {
-            Module module = CheckModules(out int id);
+            Module module = CheckModules(out Process p);
             if (module == null) return;
 
             activeModule = module;
-            mem = new();
-            mem.OpenProcess(id);
+            mem = new(p);
+            Program.Log("Found app for module: " + module.fileName);
             PresenceHandler.Init(module.appId);
         }
 
-        private static Module CheckModules(out int id) {
+        private static Module CheckModules(out Process p) {
             foreach (Module module in loadedModules) {
                 Process[] procs = Process.GetProcessesByName(module.appName);
                 if (procs.Length < 1) continue;
@@ -53,15 +52,15 @@ namespace EverythingRichPresence.Modules {
                     foreach (Process proc in procs) {
                         if (!proc.MainWindowTitle.ToLower().Contains(module.titleContains.ToLower())) continue;
 
-                        id = proc.Id;
+                        p = proc;
                         return module;
                     }
                 } else {
-                    id = procs[0].Id;
+                    p = procs[0];
                     return module;
                 }
             }
-            id = 0;
+            p = null;
             return null;
         }
     }

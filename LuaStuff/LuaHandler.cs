@@ -1,4 +1,5 @@
 ﻿using EverythingRichPresence.Modules;
+using Microsoft.VisualBasic;
 using Neo.IronLua;
 using System.IO;
 
@@ -22,7 +23,8 @@ namespace EverythingRichPresence.LuaStuff {
                         filePath = f,
                         lua = lua,
                         env = env,
-                        loop = loop
+                        loop = loop,
+                        fileName = Path.GetFileNameWithoutExtension(f)
                     };
                     module.Update();
                     ModuleHandler.AddModule(module);
