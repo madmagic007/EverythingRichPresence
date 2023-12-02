@@ -1,11 +1,11 @@
-﻿using EverythingRichPresence.LuaStuff;
-using EverythingRichPresence.LuaStuff.Globals;
+﻿using ERPC.LuaStuff;
+using ERPC.LuaStuff.Globals;
 using Flurl.Http;
 using Neo.IronLua;
 using System.IO;
 using System.Net;
 
-namespace EverythingRichPresence.Modules {
+namespace ERPC.Modules {
 
     public class Module {
 

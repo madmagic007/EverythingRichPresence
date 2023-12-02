@@ -1,9 +1,9 @@
-﻿using EverythingRichPresence.Modules;
+﻿using ERPC.Modules;
 using Microsoft.VisualBasic;
 using Neo.IronLua;
 using System.IO;
 
-namespace EverythingRichPresence.LuaStuff {
+namespace ERPC.LuaStuff {
 
     public class LuaHandler {
 

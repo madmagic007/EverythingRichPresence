@@ -1,14 +1,11 @@
-using EverythingRichPresence.LuaStuff;
-using EverythingRichPresence.Modules;
-using EverythingRichPresence.Properties;
+using ERPC.LuaStuff;
+using ERPC.Modules;
+using ERPC.Properties;
 using Microsoft.Win32;
-using Neo.IronLua;
 using System.Diagnostics;
-using System.Resources;
 using System.Runtime.InteropServices;
-using System.Security.Policy;
 
-namespace EverythingRichPresence {
+namespace ERPC {
 
     public class Program : ApplicationContext {
 
@@ -30,6 +27,8 @@ namespace EverythingRichPresence {
         });
 
         public Program() {
+            WebMemory.CreateAuth();
+
             trayIcon = new() {
                 Text = "Everything RPC",
                 ContextMenuStrip = new(),
@@ -100,7 +99,7 @@ namespace EverythingRichPresence {
         }
 
         public static void Log(string s) {
-            if (currentState != show) return;
+            //if (currentState != show) return;
             Console.WriteLine(s);
         }
     }

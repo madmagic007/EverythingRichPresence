@@ -1,6 +1,6 @@
-﻿using EverythingRichPresence.LuaStuff.Globals;
+﻿using ERPC.LuaStuff.Globals;
 
-namespace EverythingRichPresence.LuaStuff {
+namespace ERPC.LuaStuff {
 
     public class Globalhandler {
 

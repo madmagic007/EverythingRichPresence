@@ -1,8 +1,8 @@
 ﻿using DiscordRPC;
-using EverythingRichPresence.Modules;
+using ERPC.Modules;
 using Neo.IronLua;
 
-namespace EverythingRichPresence {
+namespace ERPC {
 
     public class PresenceHandler {
 

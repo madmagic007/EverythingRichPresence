@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics;
 using Timer = System.Threading.Timer;
 
-namespace EverythingRichPresence.Modules {
+namespace ERPC.Modules {
 
     public class ModuleHandler {
 
         public static readonly List<Module> loadedModules = new();
         public static Module activeModule;
         private static Timer timer;
-        public static MyMemory mem;
+        public static WebMemory mem;
 
         public static void AddModule(Module module) {
             if (loadedModules.FindIndex(m => m.fileName == module.fileName) >= 0) return;
@@ -39,6 +39,7 @@ namespace EverythingRichPresence.Modules {
 
             activeModule = module;
             mem = new(p);
+            Console.WriteLine("found");
             Program.Log("Found app for module: " + module.fileName);
             PresenceHandler.Init(module.appId);
         }

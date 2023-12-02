@@ -1,6 +1,6 @@
 ﻿using Neo.IronLua;
 
-namespace EverythingRichPresence.LuaStuff.Globals
+namespace ERPC.LuaStuff.Globals
 {
 
     public class LuaGlobalSetPresence : IGlobal {
