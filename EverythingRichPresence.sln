@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ERPC", "ERPC\ERPC.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERPCx86", "ERPCx86\ERPCx86.csproj", "{0D314BD5-11BB-40D8-87A3-4870205C6509}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ERPCx64", "ERPCx64\ERPCx64.csproj", "{B7760F90-371F-4857-8FE8-F10412CFD6B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{0D314BD5-11BB-40D8-87A3-4870205C6509}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0D314BD5-11BB-40D8-87A3-4870205C6509}.Release|x86.ActiveCfg = Release|Any CPU
 		{0D314BD5-11BB-40D8-87A3-4870205C6509}.Release|x86.Build.0 = Release|Any CPU
+		{B7760F90-371F-4857-8FE8-F10412CFD6B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7760F90-371F-4857-8FE8-F10412CFD6B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7760F90-371F-4857-8FE8-F10412CFD6B5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B7760F90-371F-4857-8FE8-F10412CFD6B5}.Debug|x86.Build.0 = Debug|Any CPU
+		{B7760F90-371F-4857-8FE8-F10412CFD6B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7760F90-371F-4857-8FE8-F10412CFD6B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7760F90-371F-4857-8FE8-F10412CFD6B5}.Release|x86.ActiveCfg = Release|Any CPU
+		{B7760F90-371F-4857-8FE8-F10412CFD6B5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
