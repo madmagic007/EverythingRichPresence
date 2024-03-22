@@ -1,24 +1,54 @@
-﻿using System.IO;
-using System;
+using CliWrap;
 
 namespace ERPCx86 {
 
-    internal static class Program {
+    public class Program {
 
-        static void Main() {
-#if (!DEBUG)
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[] { 
-                new Service() 
-            };
-            ServiceBase.Run(ServicesToRun);
-#else
-            Service serv = new Service();
-            serv.Start();
-#endif
+        const string ServiceName = "ERPC x86";
+
+        public static void Main(string[] args) {
+
+            if (args is { Length: 1 }) {
+                try {
+                    string executablePath =
+                        Path.Combine(AppContext.BaseDirectory, "ERPCx86.exe");
+
+                    if (args[0] is "/Install") {
+                        Cli.Wrap("sc")
+                            .WithArguments(new[] { "create", ServiceName, $"binPath={executablePath}", "start=auto" })
+                            .ExecuteAsync();
+                        Cli.Wrap("sc")
+                            .WithArguments(new[] { "start", ServiceName })
+                            .ExecuteAsync();
+                    } else if (args[0] is "/Uninstall") {
+                        Cli.Wrap("sc")
+                            .WithArguments(new[] { "stop", ServiceName })
+                            .ExecuteAsync();
+                        Cli.Wrap("sc")
+                            .WithArguments(new[] { "delete", ServiceName })
+                            .ExecuteAsync();
+                    }
+                } catch (Exception ex) {
+                    Console.WriteLine(ex);
+                }
+
+                return;
+            }
+
+            HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+
+            builder.Services.AddWindowsService(options => {
+                options.ServiceName = ServiceName;
+            });
+
+            builder.Services.AddHostedService<Worker>();
+
+            IHost host = builder.Build();
+            host.Run();
         }
 
-        private static readonly FileInfo authFile = new FileInfo(Environment.GetEnvironmentVariable("APPDATA") + "/MadMagic/Everything Rich Presence/auth");
+
+        private static readonly FileInfo authFile = new (Environment.GetEnvironmentVariable("APPDATA") + "/MadMagic/Everything Rich Presence/auth");
 
         public static bool CheckAuth(string givenAuth) {
             if (!authFile.Exists) return false;

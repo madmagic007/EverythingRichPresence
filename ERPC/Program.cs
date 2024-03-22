@@ -47,6 +47,9 @@ namespace ERPC {
                     };
                     Process.Start(psi);
                 }),
+                new ToolStripMenuItem ("Download Module", null, (_, _) => {
+                    ModuleDownloader.ShowDialog();
+                }),
                 new ToolStripSeparator(),
                 consoleItem,
                 new ToolStripSeparator(),
@@ -61,7 +64,7 @@ namespace ERPC {
         }
 
         public static void SendNotif(string text) {
-            trayIcon.ShowBalloonTip(0, "ERPC", text, ToolTipIcon.Info);
+            trayIcon.ShowBalloonTip(0, "Everything Rich Presence", text, ToolTipIcon.Info);
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]

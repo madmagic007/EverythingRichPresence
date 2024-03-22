@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace ERPC {
+namespace ERPCx86 {
 
     public class Mem86 {
 

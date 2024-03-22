@@ -44,14 +44,16 @@ namespace ERPC {
             p?.Close();
             p = null;
 
+            JsonObject o = new() {
+                ["action"] = "close"
+            };
+
+            urlToUse.WithHeader("auth", auth).PostJsonAsync(o.ToString()).Result.GetStringAsync();
         }
 
         public string ReadString(string address, int length = 100) {
             JsonObject o = GetReadJson("string", address);
             o["length"] = length;
-
-            Console.WriteLine("string");
-            Console.WriteLine(GetJsonString(o));
 
             return urlToUse.WithHeader("auth", auth).PostJsonAsync(GetJsonString(o)).Result.GetStringAsync().Result;
         }

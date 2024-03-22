@@ -1,19 +1,14 @@
-﻿using ERPC;
-using NHttp;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
 using System.Net;
-using Test;
 
 namespace ERPCx86 {
 
     internal class WebSocket : Mhttp {
 
-        private readonly Mem86 mem = new Mem86();
+        private readonly Mem86 mem = new ();
 
-        public WebSocket() : base(46186) { }
+        public WebSocket() : base(46186) {}
 
         protected override void HandleRequest(HttpListenerRequest req, HttpListenerResponse resp) {
             if (req.HttpMethod != "POST" || !Program.CheckAuth(req.Headers.Get("auth"))) {
@@ -49,8 +44,6 @@ namespace ERPCx86 {
                             int length = 100;
                             if (dict.TryGetValue("length", out string l))
                                 length = int.Parse(l);
-
-                            Console.WriteLine("reading: " + address);
                             WriteResponse(mem.ReadString(address, length: length));
                             break;
 

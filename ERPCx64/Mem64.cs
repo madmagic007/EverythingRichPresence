@@ -8,7 +8,7 @@ using System.Text;
 using System.IO;
 using System.Xml.Linq;
 
-namespace ERPC {
+namespace ERPCx64 {
 
     public class Mem64 {
 

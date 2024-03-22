@@ -1,32 +1,28 @@
 ﻿using Newtonsoft.Json;
-using NHttp;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Net;
-using System.Runtime.Remoting.Contexts;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Script.Serialization;
 
-namespace Test {
+namespace ERPCx86 {
 
-    public abstract class Mhttp : HttpServer {
+    public abstract class Mhttp {
 
         private HttpListener listener;
         protected HttpListenerResponse resp;
         protected HttpListenerRequest req;
-        private Task task;
-        private bool run = true;
 
         public Mhttp(int port) {
             listener = new HttpListener();
             listener.Prefixes.Add($"http://localhost:{port}/");
             listener.Start();
+        }
 
-            run = true;
-            task = new Task(() => {
-                while (run) {
+        public async void StartSocket(CancellationToken token) {
+            await Task.Run(() => {
+                while (!token.IsCancellationRequested) {
                     HttpListenerContext ctx = listener.GetContext();
 
                     resp = ctx.Response;
@@ -36,15 +32,7 @@ namespace Test {
 
                     resp.Close();
                 }
-            });
-
-            task.Start();
-        }
-
-        public void StopSocket() {
-            run = false;
-            task.Dispose();
-            Stop();
+            }, token);
         }
 
         protected abstract void HandleRequest(HttpListenerRequest req, HttpListenerResponse resp);

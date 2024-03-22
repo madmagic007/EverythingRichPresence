@@ -1,17 +1,14 @@
 local module = {
     discordAppId = "772853901396279376",
     appName = "hl2",
-    titleContains = "Garry's Mod",
-    updateUrl = "https://github.com/madmagic007/EverythingRichPresence/raw/main/exampleModules/Garry's%20Mod%20by%20MadMagic.lua"
+    titleContains = "Garry's Mod"
+    --updateUrl = "https://github.com/madmagic007/EverythingRichPresence/raw/main/exampleModules/Garry's%20Mod%20by%20MadMagic.lua"
 }
 
-local clientDll = "0x516F0000"
-local engineDll = "0x58320000"
-
 local addresses = {
-    serverName = clientDll .. "+7B4F20",
-    map = engineDll .. "+4F3F80",
-    gamemode = clientDll .. "+6F5898"
+    serverName = "client.dll+7BB158",
+    map = "engine.dll+4F4EF8",
+    gamemode = "filesystem_stdio.dll+C676C"
 }
 
 local gamemodeMapping = {
@@ -23,6 +20,9 @@ RegisterModule(module, function()
     local serverName = Mem.readString(addresses.serverName)
     local gamemode =  Mem.readString(addresses.gamemode)
     local map = Mem.readString(addresses.map)
+
+
+    print(serverName)
 
     local presence = {
         largeImageKey = "gmod",
