@@ -1,14 +1,14 @@
 local module = {
     discordAppId = "772853901396279376",
     appName = "hl2",
-    titleContains = "Garry's Mod"
-    --updateUrl = "https://github.com/madmagic007/EverythingRichPresence/raw/main/exampleModules/Garry's%20Mod%20by%20MadMagic.lua"
+    titleContains = "Garry's Mod",
+    updateUrl = "https://github.com/madmagic007/EverythingRichPresence/raw/main/exampleModules/Garry's%20Mod%20by%20MadMagic.lua"
 }
 
 local addresses = {
-    serverName = "client.dll+7BB158",
-    map = "engine.dll+4F4EF8",
-    gamemode = "filesystem_stdio.dll+C676C"
+    serverName = "client.dll+7BCD28",
+    map = "engine.dll+4F5F90",
+    gamemode = "filesystem_stdio.dll+C56E4"
 }
 
 local gamemodeMapping = {
