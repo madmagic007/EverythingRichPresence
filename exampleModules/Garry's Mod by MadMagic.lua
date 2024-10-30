@@ -6,9 +6,9 @@ local module = {
 }
 
 local addresses = {
-    serverName = "client.dll+7BCD28",
-    map = "engine.dll+4F5F90",
-    gamemode = "filesystem_stdio.dll+C56E4"
+    serverName = "client.dll+7F3090",
+    map = "engine.dll+4FCC60",
+    gamemode = "client.dll+734618"
 }
 
 local gamemodeMapping = {
