@@ -1,6 +1,6 @@
 local module = {
     discordAppId = "772853901396279376",
-    appName = "hl2",
+    appName = "gmod",
     titleContains = "Garry's Mod",
     updateUrl = "https://github.com/madmagic007/EverythingRichPresence/raw/main/exampleModules/Garry's%20Mod%20by%20MadMagic.lua"
 }
