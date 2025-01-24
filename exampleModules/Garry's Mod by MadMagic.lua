@@ -1,8 +1,8 @@
 local module = {
     discordAppId = "772853901396279376",
     appName = "gmod",
-    titleContains = "Garry's Mod",
-    updateUrl = "https://github.com/madmagic007/EverythingRichPresence/raw/main/exampleModules/Garry's%20Mod%20by%20MadMagic.lua"
+    titleContains = "Garry's Mod"
+    --updateUrl = "https://github.com/madmagic007/EverythingRichPresence/raw/main/exampleModules/Garry's%20Mod%20by%20MadMagic.lua"
 }
 
 local addresses = {
@@ -25,10 +25,9 @@ RegisterModule(module, function()
     print("gamemode: " .. gamemode)
     print("map: " .. map)
 
-    --disabling assets for discord issue
     local presence = {
-        -- largeImageKey = "gmod",
-        -- largeImageText = "Garry's Mod RPC By MadMagic",
+        largeImageKey = "gmod",
+        largeImageText = "Garry's Mod RPC By MadMagic",
         details = "In Main Menu"
     }
 
@@ -47,8 +46,8 @@ RegisterModule(module, function()
         end
 
         
-        -- presence.smallImageKey = gamemode
-        -- presence.smallImageText = niceGamemode
+        presence.smallImageKey = gamemode
+        presence.smallImageText = niceGamemode
     end
 
     SetPresence(presence)
