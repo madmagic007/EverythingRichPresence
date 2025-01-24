@@ -10,7 +10,7 @@ using System.Text.Json.Nodes;
 
 namespace ERPC {
 
-    public class WebMemory {
+    public partial class WebMemory {
 
         private static readonly string url86 = "http://localhost:46186";
         private static readonly string url64 = "http://localhost:46164";
@@ -34,10 +34,11 @@ namespace ERPC {
         private bool OpenWeb(int id) {
             JsonObject o = new() {
                 ["action"] = "open",
-                ["id"] = id
+                ["id"] = id.ToString()
             };
 
-            return urlToUse.WithHeader("auth", auth).PostJsonAsync(o.ToString()).Result.GetStringAsync().Result.Equals("success");
+            string res = PerformRequest<string>(o);
+            return res.Equals("success");
         }
 
         public void CloseProcess() {
@@ -48,60 +49,41 @@ namespace ERPC {
                 ["action"] = "close"
             };
 
-            urlToUse.WithHeader("auth", auth).PostJsonAsync(o.ToString()).Result.GetStringAsync();
+            PerformRequest<string>(o);
         }
 
+        //todo length customisation
         public string ReadString(string address, int length = 100) {
             JsonObject o = GetReadJson("string", address);
-            o["length"] = length;
+            o["length"] = length.ToString();
 
-            return urlToUse.WithHeader("auth", auth).PostJsonAsync(GetJsonString(o)).Result.GetStringAsync().Result;
+            return PerformRequest<string>(o);
         }
 
-        public int ReadInt(string address) {
-            JsonObject o = GetReadJson("int", address);
-
-            return int.Parse(urlToUse.WithHeader("auth", auth).PostJsonAsync(GetJsonString(o)).Result.GetStringAsync().Result);
-        }
-
-        public double ReadDouble(string address) {
-            JsonObject o = GetReadJson("double", address);
-
-            return double.Parse(urlToUse.WithHeader("auth", auth).PostJsonAsync(GetJsonString(o)).Result.GetStringAsync().Result);
-        }
-
-        public float ReadFloat(string address) {
-            JsonObject o = GetReadJson("float", address);
-
-            return float.Parse(urlToUse.WithHeader("auth", auth).PostJsonAsync(GetJsonString(o)).Result.GetStringAsync().Result);
-        }
-
-        public long ReadLong(string address) {
-            JsonObject o = GetReadJson("long", address);
-
-            return long.Parse(urlToUse.WithHeader("auth", auth).PostJsonAsync(GetJsonString(o)).Result.GetStringAsync().Result);
-        }
-
-        public byte ReadByte(string address) {
-            JsonObject o = GetReadJson("byte", address);
-
-            return byte.Parse(urlToUse.WithHeader("auth", auth).PostJsonAsync(GetJsonString(o)).Result.GetStringAsync().Result);
-        }
-
-        private JsonObject GetReadJson(string type, string address) {
-            return new JsonObject() {
+        private static JsonObject GetReadJson(string type, string address) => new() {
                 ["action"] = "read",
                 ["type"] = type,
                 ["address"] = address.Replace("+", " ")
-            };
+        };
+        
+
+        public T PerformRequest<T>(string address) {
+            JsonObject o = GetReadJson(typeof(T).ToString(), address);
+           return PerformRequest<T>(o);
         }
 
-        private string GetJsonString(JsonObject o) {
-            return o.ToString();
+        public T PerformRequest<T>(JsonObject o) {
+            string resp = "0";
+            try {
+                resp = urlToUse.WithHeader("auth", auth).AllowAnyHttpStatus().PostJsonAsync(o).Result.GetStringAsync().Result;
+            } catch {}
+
+            return (T)Convert.ChangeType(resp, typeof(T));
         }
 
-        [DllImport("kernel32")]
-        private static extern bool IsWow64Process(IntPtr hProcess, out bool lpSystemInfo);
+        [LibraryImport("kernel32")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool IsWow64Process(IntPtr hProcess, [MarshalAs(UnmanagedType.Bool)] out bool lpSystemInfo);
 
         public static void CreateAuth() {
             auth = GetRandomHexNumber();
@@ -118,4 +100,6 @@ namespace ERPC {
             return result + random.Next(16).ToString("X");
         }
     }
+    
+    static class Nothing {}
 }

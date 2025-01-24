@@ -1,73 +1,78 @@
 ﻿using System.Net;
 
-namespace ERPCx64 {
+namespace ERPCx64;
 
-    internal class WebSocket : Mhttp {
+internal class WebSocket : Mhttp {
 
-        private readonly Mem64 mem = new ();
+    private readonly Mem64 mem = new();
 
-        public WebSocket() : base(46164) {}
+    public WebSocket() : base(46164) { }
 
-        protected override void HandleRequest(HttpListenerRequest req, HttpListenerResponse resp) {
-            if (req.HttpMethod != "POST" || !Program.CheckAuth(req.Headers.Get("auth"))) {
-                resp.Redirect("https://retard.com");
-                return;
-            }
+    protected override void HandleRequest(HttpListenerRequest req, HttpListenerResponse resp) {
+        if (req.HttpMethod != "POST") {
+            BadRequest();
+            return;
+        }
 
-            Dictionary<string, string> dict = GetDict();
+        if (!Program.CheckAuth(req.Headers.Get("auth"))) {
+            UnAuthorized();
+            return;
+        }
 
-            if (ErrorIfAbsent(dict, "action", out string actionValue)) return;
-            switch (actionValue) {
-                case "open":
-                    if (ErrorIfAbsent(dict, "id", out string id)) return;
+        Dictionary<string, string> dict = GetDict();
 
-                    if (mem.p != null)
-                        mem.CloseProcess();
+        if (ErrorIfAbsent(dict, "action", out string actionValue)) return;
+        switch (actionValue) {
+            case "open":
+                if (ErrorIfAbsent(dict, "id", out string id)) return;
 
-                    mem.LoadProcess(int.Parse(id));
-                    WriteResponse("success");
-                    break;
-
-                case "close":
+                if (mem.p != null)
                     mem.CloseProcess();
-                    break;
 
-                case "read":
-                    if (ErrorIfAbsent(dict, "type", out string type)) return;
-                    if (ErrorIfAbsent(dict, "address", out string address)) return;
-                    address = address.Replace(" ", "+");
+                mem.LoadProcess(int.Parse(id));
+                WriteResponse("success");
+                break;
 
-                    switch (type) {
-                        case "string":
-                            int length = 100;
-                            if (dict.TryGetValue("length", out string l))
-                                length = int.Parse(l);
-                            WriteResponse(mem.ReadString(address, length: length));
-                            break;
+            case "close":
+                mem.CloseProcess();
+                break;
 
-                        case "int":
-                            WriteResponse(mem.ReadInt(address));
-                            break;
+            case "read":
+                if (ErrorIfAbsent(dict, "type", out string type)) return;
+                if (ErrorIfAbsent(dict, "address", out string address)) return;
+                address = address.Replace(" ", "+");
 
-                        case "long":
-                            WriteResponse(mem.ReadLong(address));
-                            break;
+                switch (type) {
+                    case "string":
+                        int length = 100;
+                        if (dict.TryGetValue("length", out string l))
+                            length = int.Parse(l);
+                        WriteResponse(mem.ReadString(address, length: length));
+                        break;
 
-                        case "float":
-                            WriteResponse(mem.ReadFloat(address));
-                            break;
+                    case "int":
+                        WriteResponse(mem.ReadInt(address));
+                        break;
 
-                        case "double":
-                            WriteResponse(mem.ReadDouble(address));
-                            break;
+                    case "long":
+                        WriteResponse(mem.ReadLong(address));
+                        break;
 
-                        case "byte":
-                            WriteResponse(mem.ReadByte(address));
-                            break;
-                    }
+                    case "float":
+                        WriteResponse(mem.ReadFloat(address));
+                        break;
 
-                    break;
-            }
+                    case "double":
+                        WriteResponse(mem.ReadDouble(address));
+                        break;
+
+                    case "byte":
+                        WriteResponse(mem.ReadByte(address));
+                        break;
+                }
+
+                break;
         }
     }
 }
+

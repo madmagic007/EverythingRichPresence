@@ -9,11 +9,13 @@ namespace ERPC.LuaStuff {
 
         public static void Init() {
             ModuleHandler.loadedModules.Clear();
+
             Directory.GetFiles(Program.modulesDir.FullName, "*", SearchOption.AllDirectories).OfType<string>().ToList().ForEach(f => {
                 Lua lua = new();
                 dynamic env = lua.CreateEnvironment<LuaGlobal>();
 
-                Globalhandler.LoadGlobals(env);
+                LuaGlobals.LoadGlobals(env);
+
                 env.RegisterModule = new Action<LuaTable, Func<object>>((table, loop) => {
                     Module module = new() {
                         appName = table.GetValue("appName") as string,
@@ -26,7 +28,8 @@ namespace ERPC.LuaStuff {
                         loop = loop,
                         fileName = Path.GetFileNameWithoutExtension(f)
                     };
-                    module.Update();
+
+					module.Update();
                     ModuleHandler.AddModule(module);
                 });
 

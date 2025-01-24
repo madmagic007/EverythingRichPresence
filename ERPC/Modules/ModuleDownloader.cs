@@ -1,10 +1,8 @@
 ﻿using ERPC.LuaStuff;
-using ERPC.Modules;
 using Microsoft.VisualBasic;
 using System.Net;
-using System.Security.Policy;
 
-namespace ERPC {
+namespace ERPC.Modules {
 
     public class ModuleDownloader {
 
@@ -12,12 +10,12 @@ namespace ERPC {
             string url = Interaction.InputBox("Fill in download URL", "Download Module", "");
 
             if (string.IsNullOrEmpty(url)) {
-                ShowInvalid();
                 return;
             }
 
             if (!(Uri.TryCreate(url, UriKind.Absolute, out Uri uri) && uri != null &&
                 (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))) {
+
                 ShowInvalid();
                 return;
             }

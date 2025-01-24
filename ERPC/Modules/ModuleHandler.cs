@@ -5,7 +5,7 @@ namespace ERPC.Modules {
 
     public class ModuleHandler {
 
-        public static readonly List<Module> loadedModules = new();
+        public static readonly List<Module> loadedModules = [];
         public static Module activeModule;
         private static Timer timer;
         public static WebMemory mem;
@@ -24,13 +24,16 @@ namespace ERPC.Modules {
                     PresenceHandler.StopPresence();
                     mem.CloseProcess();
                     ScanModules();
-                } else activeModule.loop.Invoke();
-            }, null, 0, 1000);
+                } else activeModule?.loop.Invoke();
+            }, null, 0, 3000);
         }
 
         public static void StopAll() {
             timer?.Dispose();
             PresenceHandler.StopPresence();
+            activeModule = null;
+            mem?.CloseProcess();
+            mem = null;
         }
 
         private static void ScanModules() {
@@ -39,7 +42,6 @@ namespace ERPC.Modules {
 
             activeModule = module;
             mem = new(p);
-            Console.WriteLine("found");
             Program.Log("Found app for module: " + module.fileName);
             PresenceHandler.Init(module.appId);
         }
@@ -61,6 +63,7 @@ namespace ERPC.Modules {
                     return module;
                 }
             }
+
             p = null;
             return null;
         }

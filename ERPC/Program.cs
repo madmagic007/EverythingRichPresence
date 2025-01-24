@@ -3,26 +3,37 @@ using ERPC.Modules;
 using ERPC.Properties;
 using Microsoft.Win32;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.Text.Json;
 
 namespace ERPC {
-
     public class Program : ApplicationContext {
 
         public static readonly DirectoryInfo modulesDir = Directory.CreateDirectory(Environment.GetEnvironmentVariable("APPDATA") + "/MadMagic/Everything Rich Presence/modules");
+        private static readonly FileInfo loggerExe = new(modulesDir.Parent.FullName + "/ConsoleLogger.exe");
+
+        private static readonly FileInfo x86 = new(modulesDir.Parent.FullName + "/ERPCx86.exe");
+        private static readonly FileInfo x64 = new(modulesDir.Parent.FullName + "/ERPCx64.exe");
 
         [STAThread]
         static void Main() {
             Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)
                .SetValue("ERPC", Application.ExecutablePath);
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Program());
+            Mutex mutex = new(false, "ERPC");
+
+            try {
+                if (mutex.WaitOne(0, false)) {
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new Program());
+                }
+            } finally {
+                mutex.Close();
+            }
         }
 
         public static NotifyIcon trayIcon;
-        private static ToolStripMenuItem consoleItem = new("Enable Module Debug Console", null, (_, _) => {
+        private static readonly ToolStripMenuItem consoleItem = new("Enable Module Debug Console", null, (_, _) => {
             ToggleConsole();
         });
 
@@ -35,8 +46,9 @@ namespace ERPC {
                 Icon = Resources.icon,
                 Visible = true
             };
-            trayIcon.ContextMenuStrip.Items.AddRange(new ToolStripItem[] {
+            trayIcon.ContextMenuStrip.Items.AddRange([
                 new ToolStripMenuItem("Refresh modules", null, (_, _) => {
+                    ModuleHandler.StopAll();
                     LuaHandler.Init();
                     ModuleHandler.Init();
                 }),
@@ -57,53 +69,58 @@ namespace ERPC {
                     trayIcon.Visible = false;
                     Environment.Exit(0);
                 })
-            });
+            ]);
 
-            LuaHandler.Init();
+			LuaHandler.Init();
             ModuleHandler.Init();
+
+            List<Process> processes = [
+                Process.Start(x64.FullName),
+                Process.Start(x86.FullName)
+            ];
+
+            AppDomain.CurrentDomain.ProcessExit += (_, _) => {
+                processes.ForEach(p => p.Kill());
+            };
         }
 
         public static void SendNotif(string text) {
             trayIcon.ShowBalloonTip(0, "Everything Rich Presence", text, ToolTipIcon.Info);
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        static extern bool AllocConsole();
-
-        [DllImport("kernel32.dll")]
-        static extern IntPtr GetConsoleWindow();
-
-        [DllImport("user32.dll")]
-        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        private static int hide = 0;
-        private static int show = 5;
-        private static int currentState = 0;
+        private static Process? p;
 
         private static void ToggleConsole() {
-            IntPtr handle = GetConsoleWindow();
-            currentState = currentState == hide ? show : hide;
+            if (p == null) {
+                p = Process.Start(new ProcessStartInfo {
+                    FileName = loggerExe.FullName,
+                    UseShellExecute = false,
+                    RedirectStandardInput = true
+                });
 
-            if (handle == IntPtr.Zero) AllocConsole();
-            else {
-                ShowWindow(handle, currentState);
-                Console.WriteLine("showing");
+                Log("Warning:", ConsoleColor.Red);
+                Log("Closing this console window will exit ERPC! You can close this window in the same way you opened it.", ConsoleColor.Yellow);
+            } else {
+                p.Kill();
+                p = null;
             }
 
-            consoleItem.Text = $"{(currentState == hide ? "Enable" : "Disable")} Module Debug Console";
-
-            if (currentState == show) {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Warning: ");
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Closing this window will exit the app, disable the console from the system tray.");
-                Console.ResetColor();
-            }
+            consoleItem.Text = (p == null ? "Enable" : "Disable") + " Module Debug Console";
         }
 
-        public static void Log(string s) {
-            //if (currentState != show) return;
-            Console.WriteLine(s);
+        public static void Log(string message, ConsoleColor color = ConsoleColor.White) {
+            string s = JsonSerializer.Serialize(new MessageContent {
+                message = message,
+                color = color
+            });
+            p?.StandardInput.WriteLine(s);
+
+            Console.ForegroundColor = color;
         }
+    }
+
+    class MessageContent {
+        public string message { get; set; }
+        public ConsoleColor color { get; set; }
     }
 }

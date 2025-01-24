@@ -1,9 +1,6 @@
 ﻿using ERPC.LuaStuff;
-using ERPC.LuaStuff.Globals;
 using Flurl.Http;
 using Neo.IronLua;
-using System.IO;
-using System.Net;
 
 namespace ERPC.Modules {
 
@@ -24,9 +21,10 @@ namespace ERPC.Modules {
             lua.Dispose();
             env = lua.CreateEnvironment<LuaGlobal>();
 
-            Globalhandler.LoadGlobals(env);
+            LuaGlobals.LoadGlobals(env);
             env.RegisterModule = new Action<LuaTable, Func<object>>((table, loop) => {
-                appName = table.GetValue("appName") as string;
+				Console.WriteLine("created updated module");
+				appName = table.GetValue("appName") as string;
                 appId = table.GetValue("discordAppId") as string;
                 titleContains = table.GetValue("titleContains") as string;
                 updateUrl = table.GetValue("updateUrl") as string;

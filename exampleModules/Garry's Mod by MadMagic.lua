@@ -17,6 +17,7 @@ local gamemodeMapping = {
 }
 
 RegisterModule(module, function()
+    print("in loop")
     local serverName = Mem.readString(addresses.serverName)
     local gamemode =  Mem.readString(addresses.gamemode)
     local map = Mem.readString(addresses.map)
