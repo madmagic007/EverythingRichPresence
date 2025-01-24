@@ -21,8 +21,9 @@ RegisterModule(module, function()
     local gamemode =  Mem.readString(addresses.gamemode)
     local map = Mem.readString(addresses.map)
 
-    print(map)
-    print(serverName)
+    print("serverName: " .. serverName)
+    print("gamemode: " .. gamemode)
+    print("map: " .. map)
 
     --disabling assets for discord issue
     local presence = {
@@ -30,8 +31,6 @@ RegisterModule(module, function()
         -- largeImageText = "Garry's Mod RPC By MadMagic",
         details = "In Main Menu"
     }
-
-
 
     if map ~= "" then
         local niceGamemode = gamemodeMapping[gamemode]
@@ -44,7 +43,7 @@ RegisterModule(module, function()
             presence.state = "Playing " .. niceGamemode .. " on " .. map
         else
             presence.details = "Playing " .. niceGamemode
-            presence.state = "Playing on" .. map
+            presence.state = "Playing on " .. map
         end
 
         
