@@ -17,7 +17,7 @@ local gamemodeMapping = {
 }
 
 RegisterModule(module, function()
-    local serverName = Mem.readString(addresses.serverName)
+    local serverName = Mem.readString(addresses.serverName) 
     local gamemode =  Mem.readString(addresses.gamemode)
     local map = Mem.readString(addresses.map)
 
@@ -31,14 +31,23 @@ RegisterModule(module, function()
         details = "In Main Menu"
     }
 
+
+
     if map ~= "" then
         local niceGamemode = gamemodeMapping[gamemode]
         if niceGamemode == nil then
             niceGamemode = gamemode
         end
 
-        presence.details = "Playing on " .. serverName
-        presence.state = "Playing " .. niceGamemode .. " on " .. map
+        if serverName ~= "" then
+            presence.details = "Playing on " .. serverName
+            presence.state = "Playing " .. niceGamemode .. " on " .. map
+        else
+            presence.details = "Playing " .. niceGamemode
+            presence.state = "Playing on" .. map
+        end
+
+        
         -- presence.smallImageKey = gamemode
         -- presence.smallImageText = niceGamemode
     end
