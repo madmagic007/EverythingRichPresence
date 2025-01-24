@@ -1,14 +1,14 @@
 local module = {
     discordAppId = "772853901396279376",
-    appName = "hl2",
+    appName = "gmod",
     titleContains = "Garry's Mod"
     --updateUrl = "https://github.com/madmagic007/EverythingRichPresence/raw/main/exampleModules/Garry's%20Mod%20by%20MadMagic.lua"
 }
 
 local addresses = {
-    serverName = "client.dll+7BB158",
-    map = "engine.dll+4F4EF8",
-    gamemode = "filesystem_stdio.dll+C676C"
+    serverName = "client.dll+7F0FD0",
+    map = "engine.dll+4F2740",
+    gamemode = "client.dll+732558"
 }
 
 local gamemodeMapping = {
@@ -17,13 +17,13 @@ local gamemodeMapping = {
 }
 
 RegisterModule(module, function()
-    print("in loop")
-    local serverName = Mem.readString(addresses.serverName)
+    local serverName = Mem.readString(addresses.serverName) 
     local gamemode =  Mem.readString(addresses.gamemode)
     local map = Mem.readString(addresses.map)
 
-
-    print(serverName)
+    print("serverName: " .. serverName)
+    print("gamemode: " .. gamemode)
+    print("map: " .. map)
 
     local presence = {
         largeImageKey = "gmod",
@@ -37,11 +37,18 @@ RegisterModule(module, function()
             niceGamemode = gamemode
         end
 
-        presence.details = "Playing on " .. serverName
-        presence.state = "Playing " .. niceGamemode .. " on " .. map
+        if serverName ~= "" then
+            presence.details = "Playing on " .. serverName
+            presence.state = "Playing " .. niceGamemode .. " on " .. map
+        else
+            presence.details = "Playing " .. niceGamemode
+            presence.state = "Playing on " .. map
+        end
+
+        
         presence.smallImageKey = gamemode
         presence.smallImageText = niceGamemode
     end
-    
+
     SetPresence(presence)
 end)
