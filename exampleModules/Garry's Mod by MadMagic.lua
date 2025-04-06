@@ -6,9 +6,9 @@ local module = {
 }
 
 local addresses = {
-    serverName = "client.dll+7F0FD0",
-    map = "engine.dll+4F2740",
-    gamemode = "client.dll+732558"
+    serverName = "client.dll+82C960",
+    map = "engine.dll+4FF7C0",
+    gamemode = "client.dll+76DB38"
 }
 
 local gamemodeMapping = {
@@ -20,11 +20,7 @@ RegisterModule(module, function()
     local serverName = Mem.readString(addresses.serverName) 
     local gamemode =  Mem.readString(addresses.gamemode)
     local map = Mem.readString(addresses.map)
-
-    print("serverName: " .. serverName)
-    print("gamemode: " .. gamemode)
-    print("map: " .. map)
-
+        
     local presence = {
         largeImageKey = "gmod",
         largeImageText = "Garry's Mod RPC By MadMagic",
